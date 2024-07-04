@@ -1,4 +1,3 @@
-// GraphTotalRevenue.js
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { processCSV } from '../utils/dataProcessor';
@@ -8,10 +7,19 @@ const GraphTotalRevenue = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('/data/meters.csv');
-      const csvData = await response.text();
-      const parsedData = await processCSV(csvData);
-      setData(parsedData);
+      try {
+        const response = await fetch('/data/meters.csv');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const csvData = await response.text();
+        console.log('Fetched CSV Data:', csvData); // Log fetched CSV data
+        const parsedData = await processCSV(csvData);
+        console.log('Parsed Data:', parsedData); // Log parsed data
+        setData(parsedData);
+      } catch (error) {
+        console.error('Error fetching or processing CSV data:', error);
+      }
     };
 
     fetchData();
